@@ -30,9 +30,10 @@ Recovered = Recovered[Id[2]:end]
 Dead = Dead[Id[2]:end]
 Time = Time[Id[2]:end]
 
-
+# create ANN with 1 hidden layer
 ann = Chain(Dense(3,10,relu),  Dense(10,1))
 p1,re = Flux.destructure(ann)
+# COVID-19 spread parameters
 p2 = Float64[0.15, 0.013, 0.01]
 p3 = [p1; p2]
 ps = Flux.params(p3)
@@ -44,6 +45,8 @@ function QSIR(du, u, p, t)
     #γ = abs(γ_parameter)
     #δ = abs(δ_parameter)
     un = [u[1]; u[2]; u[3]]
+    # un - input vector (total population, I, Dead values)
+    # [1] corresponds to 1 output of our ANN
     NN1 = abs(re(p[1:51])(un)[1])
     du[1]=  - β*u[1]*(u[2])/u0[1]
     du[2] = β*u[1]*(u[2])/u0[1] - γ*u[2] - NN1*u[2]/u0[1]
