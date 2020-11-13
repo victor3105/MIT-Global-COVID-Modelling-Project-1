@@ -10,9 +10,27 @@ using LaTeXStrings
 using StatsPlots
 using Random
 using JLD
+using DelimitedFiles
 
 ##########ARIZONA##############
 ######################## STAGE 1###############
+data = DelimitedFiles.readdlm("Data/az_mobility.csv", ',')
+d = data[2, 75:140]
+
+last_el = d[1]
+for (ind, el) in enumerate(d)
+    if ind > 1
+        last_el = d[ind - 1]
+    end
+    if el == ""
+        d[ind] = last_el
+    end
+end
+
+m = maximum(d)
+d /= m
+println(d)
+
 vars = matread("C:/Users/Raj/Desktop/2.168/COVID-19-master_latest/COVID-19-master/csse_covid_19_data/csse_covid_19_daily_reports/Rise_Arizona_Trackn.mat")
 
 Random.seed!(50)
